@@ -94,6 +94,8 @@ namespace VisionMVC.Controllers
                 {
                     _context.Update(product);
                     await _context.SaveChangesAsync();
+                    
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -101,7 +103,7 @@ namespace VisionMVC.Controllers
                     else throw;
                 }
             }
-            return RedirectToAction(nameof(Index));
+            return View();
 
         }
 
