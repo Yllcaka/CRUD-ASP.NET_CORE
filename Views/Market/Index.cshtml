@@ -1,5 +1,5 @@
 ﻿
-@model IEnumerable<VisionMVC.Models.Product>
+@model VisionMVC.Models.ProductSearch
 
 
 @{
@@ -8,27 +8,36 @@
 <h1 class="page-title">
     Market Place
 </h1>
-<button id="create" class="btn">Add</button>
+<button id="create" class="btn mb-3">Add</button>
 <div id="create-form" class="mt-3">
     <partial name="_Create" , model="new VisionMVC.Models.Product()" />
 </div>
+<form asp-controller="Market" asp-action="Index" asp-items="Model.Types">
+    <div>
+        <select asp-for="ProductType" asp-items="Model.Types">
+            <option value="">All</option>
+        </select>
+        Name <input type="text" asp-for="SearchString" />
+        <input type="submit" value="Filter" class="btn"/>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.Products[0].Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Type)
+                @Html.DisplayNameFor(model => model.Products[0].Type)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Amount)
+                @Html.DisplayNameFor(model => model.Products[0].Amount)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                @Html.DisplayNameFor(model => model.Products[0].Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AddedOn)
+                @Html.DisplayNameFor(model => model.Products[0].AddedOn)
             </th>
             <th>
                 Action
@@ -38,7 +47,7 @@
     <tbody>
         
         
-        @foreach (var item in Model)
+        @foreach (var item in Model.Products)
         {
             <tr>
                 <td>

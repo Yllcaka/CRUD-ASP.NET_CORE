@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SQLitePCL;
@@ -19,9 +20,9 @@ namespace VisionMVC.Controllers
             _context = context;
         
         }
-        public async Task<IActionResult> Index(string SearchString)
+        public async Task<IActionResult> Index(string productType, string searchString)
         {
-            /*
+
               IQueryable<string> typeQuery = _context.Product
                 .OrderBy(p => p.Type)
                 .Select(p => p.Type);
@@ -31,6 +32,10 @@ namespace VisionMVC.Controllers
             if (!string.IsNullOrEmpty(searchString))
             {
                 products = products.Where(s => s.Name.Contains(searchString));
+            }
+            if (!string.IsNullOrEmpty(productType))
+            {
+                products = products.Where(p => p.Type == productType);
             }
 
             var productSearchVM = new ProductSearch
@@ -42,13 +47,7 @@ namespace VisionMVC.Controllers
             };
 
             return View(productSearchVM);
-            //return View(await _context.Product.ToListAsync()); 
-             
-             */
-            //var products = _context.Product.Select(p => p);
 
-
-            return View(await _context.Product.ToListAsync());
         }
 
         [HttpPost]
@@ -60,7 +59,17 @@ namespace VisionMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(nameof(Index), await _context.Product.ToListAsync());
+            var products = from p in _context.Product
+                           select p;
+            var productSearchVM = new ProductSearch
+            {
+                Types = new SelectList(await products.Distinct()
+                                .ToListAsync()
+                ),
+                Products = await products.ToListAsync()
+            };
+
+            return View(nameof(Index), productSearchVM);
         }
 
         public IActionResult Edit(int? id) { 
